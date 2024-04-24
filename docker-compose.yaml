@@ -1,0 +1,95 @@
+version: "3.9"
+services:
+  backend:
+    build: .//node-ambassador
+    # image: node-ambassador-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./node-ambassador:/app
+    depends_on:
+      - db
+      - redis
+ 
+  db:
+    image: mysql:8
+    #    platform: linux/x86_64 #for m1 chip macs
+    restart: always
+    environment:
+      MYSQL_DATABASE: ambassador
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./node-ambassador/.dbdata:/var/lib/mysql
+    ports:
+      - "33066:3306"
+ 
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+ 
+  user-service:
+    build: ./arqAvanzadas-user-services
+    # image: node-ambassador-backend
+    ports:
+      - "10000:10000"
+    volumes:
+      - ./arqAvanzadas-user-services:/app
+    depends_on:
+      - user-db
+      - redis
+ 
+  user-db:
+    image: mysql:8
+    #    platform: linux/x86_64 #for m1 chip macs
+    restart: always
+    environment:
+      MYSQL_DATABASE: ambassador
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./arqAvanzadas-user-services/.dbdata:/var/lib/mysql
+    ports:
+      - "33060:3306"
+ 
+  email_backend:
+    build: ./email-microservice
+    volumes:
+      - ./email-microservice:/app
+    depends_on:
+      - mailhog
+ 
+  mailhog:
+    image: "mailhog/mailhog"
+    ports:
+      - "1025:1025" # SMTP server that ColdFusion will send mail to.
+      - "8025:8025" # Web UI that developers can access to check sent-mail.}
+ 
+ 
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./auth-service:/app
+ 
+  hardware-shop:
+    build: ./vue-hardware-shop
+    ports:
+      - "5173:5173"
+      - "3006:80"
+    volumes:
+      - ./vue-hardware-shop:/app
+  
+  next-checkout:
+    build: ./react-ambassador/next-checkout
+    ports:
+      - "5000:3000"
+    volumes:
+      - ./react-ambassador/next-checkout:/app
+  
+  react-admin:
+    build: ./react-ambassador/react-admin
+    ports:
+      - "1000:80"
+    volumes:
+      - ./react-ambassador/react-admin:/app

@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-image: url('./assets/images/stone-background.jpg');
+  background-size: 100%;
+  margin: 0;
+  font-family: 'Carter One', cursive;
+}
