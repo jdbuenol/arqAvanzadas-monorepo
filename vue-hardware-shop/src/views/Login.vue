@@ -33,21 +33,29 @@ import { ref } from 'vue';
 import Loader from '@/components/Loader.vue';
 import axios from 'axios';
 import { POSITION, useToast } from 'vue-toastification';
+import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 
 const isLoading = ref<boolean>(false);
 const email = ref<string>('');
 const password = ref<string>('');
 
 const toast = useToast();
+const store = useStore();
+const router = useRouter();
 
 const signIn = async () => {
   isLoading.value = true;
   try {
-    const { data } = await axios.post(`${import.meta.env.VITE_AUTH_SERVICE}/api/login`, {
+    const { data } = await axios.post(`${import.meta.env.VITE_AUTH_SERVICE}/api/ambassador/login`, {
       email: email.value,
       password: password.value,
     });
-    console.log(data);
+
+    if (!data.error) {
+      store.login(data.body.token);
+      router.push('/');
+    }
   } catch (error) {
     console.log(error);
     toast.error('Error at login', {
