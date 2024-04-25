@@ -1,5 +1,4 @@
 import { useStore } from '@/store';
-import { storeToRefs } from 'pinia';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
