@@ -1,7 +1,6 @@
 import {createConnection, getRepository} from "typeorm";
 import * as faker from "faker";
 import {randomInt} from "crypto";
-import {User} from "../entity/user.entity";
 import {Order} from "../entity/order.entity";
 import {OrderItem} from "../entity/order-item.entity";
 
@@ -11,7 +10,7 @@ createConnection().then(async () => {
 
     for (let i = 0; i < 30; i++) {
         const order = await orderRepository.save({
-            user_id: randomInt(2, 31),
+            user_id: faker.random.alphaNumeric(6),
             code: faker.random.alphaNumeric(6),
             ambassador_email: faker.internet.email(),
             first_name: faker.name.firstName(),
