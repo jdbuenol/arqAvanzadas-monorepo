@@ -43,7 +43,7 @@ const toast = useToast();
 const signIn = async () => {
   isLoading.value = true;
   try {
-    const { data } = await axios.post(`${import.meta.env.VITE_AUTH_SERVICE}/api/login`, {
+    const { data } = await axios.post(`${import.meta.env.VITE_AUTH_SERVICE}/login`, {
       email: email.value,
       password: password.value,
     });
