@@ -34,8 +34,40 @@ const Services = () => {
     }
   };
 
+  const verifyToken = async (
+    token: string
+  ): Promise<{ success: boolean; uid: string; is_admin: boolean }> => {
+    const decodedToken = await auth.verifyIdToken(token);
+
+    if (decodedToken) {
+      return {
+        success: true,
+        uid: decodedToken.uid,
+        is_admin: decodedToken.admin === true,
+      };
+    } else {
+      return {
+        success: false,
+        uid: "",
+        is_admin: false,
+      };
+    }
+  };
+
+  const setAdminClaim = async (uid: string) => {
+    await auth.setCustomUserClaims(uid, { admin: true });
+  };
+
+  const createToken = async (uid: string): Promise<string> => {
+    const token = await auth.createCustomToken(uid);
+    return token;
+  };
+
   return {
     createUser,
+    verifyToken,
+    setAdminClaim,
+    createToken,
   };
 };
 

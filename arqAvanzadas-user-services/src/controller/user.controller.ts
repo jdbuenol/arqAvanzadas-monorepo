@@ -4,45 +4,55 @@ import { User } from "../entity/user.entity";
 import { client } from "../index";
 
 export const Ambassadors = async (req: Request, res: Response) => {
-  res.send(await getRepository(User).find({
-    is_ambassador: true,
-  }));
+  res.send(
+    await getRepository(User).find({
+      is_ambassador: true,
+    })
+  );
 };
 
 export const Rankings = async (req: Request, res: Response) => {
-  const result: string[] = await client.sendCommand(['ZREVRANGEBYSCORE', 'rankings', '+inf', '-inf', 'WITHSCORES']);
+  const result: string[] = await client.sendCommand([
+    "ZREVRANGEBYSCORE",
+    "rankings",
+    "+inf",
+    "-inf",
+    "WITHSCORES",
+  ]);
   let name;
 
-  res.send(result.reduce((o, r) => {
-    if (isNaN(parseInt(r))) {
-      name = r;
-      return o;
-    } else {
-      return {
-        ...o,
-        [name]: parseInt(r),
-      };
-    }
-  }, {}));
+  res.send(
+    result.reduce((o, r) => {
+      if (isNaN(parseInt(r))) {
+        name = r;
+        return o;
+      } else {
+        return {
+          ...o,
+          [name]: parseInt(r),
+        };
+      }
+    }, {})
+  );
 };
 
 export const findByEmail = async (req: Request, res: Response) => {
   const email = req.params.email;
   const user = await getRepository(User).find({
-    select: ['password', 'email'],
+    select: ["password", "email", "id"],
     where: {
       email,
-    }
+    },
   });
-  if (user) {
+  if (user.length > 0) {
     res.status(200).send({
       isError: false,
-      body: user,
-    })
+      body: user[0],
+    });
   } else {
     res.status(404).send({
       isError: true,
-      message: 'User not found',
+      message: "User not found",
       body: null,
     });
   }
@@ -53,15 +63,15 @@ export const findById = async (req: Request, res: Response) => {
   const user = await getRepository(User).find({
     id,
   });
-  if (user) {
+  if (user.length > 0) {
     res.status(200).send({
       isError: false,
-      body: user,
-    })
+      body: user[0],
+    });
   } else {
     res.status(404).send({
       isError: true,
-      message: 'User not found',
+      message: "User not found",
       body: null,
     });
   }

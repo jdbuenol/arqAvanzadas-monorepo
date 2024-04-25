@@ -9,6 +9,7 @@
     "build": "git pull && yarn install && rm -r dist/** && tsc"
   },
   "dependencies": {
+    "axios": "1.6.8",
     "bcryptjs": "2.4.3",
     "express": "4.19.2",
     "firebase-admin": "12.1.0",

@@ -57,15 +57,18 @@ const router = useRouter();
 const signUp = async () => {
   isLoading.value = true;
   try {
-    await axios.post(`${import.meta.env.VITE_AUTH_SERVICE}/api/register`, {
+    const { data } = await axios.post(`${import.meta.env.VITE_AUTH_SERVICE}/api/ambassador/register`, {
       first_name: firstName.value,
       last_name: lastName.value,
       email: email.value,
       password: password.value,
       password_confirm: passwordConfirm.value,
     });
-    store.login();
-    router.push('/');
+
+    if (!data.error) {
+      store.login(data.body.token);
+      router.push('/');
+    }
   } catch (error: any) {
     toast.error(error.response?.data?.message ?? 'Error at register, try again later', {
       timeout: 3000,

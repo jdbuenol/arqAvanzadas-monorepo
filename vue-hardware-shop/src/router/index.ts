@@ -1,3 +1,5 @@
+import { useStore } from '@/store';
+import { storeToRefs } from 'pinia';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
@@ -26,6 +28,26 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach(async (to, _from, next) => {
+  const store = useStore();
+  const token = sessionStorage.getItem('token');
+
+  if (token) {
+    store.setIsLogged(true);
+  } else {
+    store.setIsLogged(false);
+  }
+
+  if ((to.path === '/login' || to.path === '/register') && token) {
+    next('/');
+  }
+
+  if (to.matched.some(record => record.meta.requiresAuth) && !token) {
+    next('/login');
+  }
+  next();
 });
 
 export default router;

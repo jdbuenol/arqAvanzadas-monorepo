@@ -35,37 +35,17 @@
       </router-link>
     </nav>
   </header>
-  <Loader v-if="isLoading" />
 </template>
 
 <script setup lang="ts">
 import { useStore } from '@/store/index';
-import axios from 'axios';
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
-import { POSITION, useToast } from 'vue-toastification';
-import Loader from './Loader.vue';
-
-const isLoading = ref<boolean>(false);
 
 const store = useStore();
 const { basket, isLogged } = storeToRefs(store);
 
-const toast = useToast();
-
 const signOut = async () => {
   store.logout();
-  isLoading.value = true;
-  try {
-    await axios.post(`${import.meta.env.VITE_AUTH_SERVICE}/api/logout`, {});
-  } catch (error: any) {
-    toast.error(error.response?.data?.message ?? 'Error at logout, try again later', {
-      timeout: 3000,
-      position: POSITION.TOP_CENTER,
-    });
-  } finally {
-    isLoading.value = false;
-  }
 };
 </script>
 

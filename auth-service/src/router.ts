@@ -3,8 +3,10 @@ import controller from "./controller";
 
 const router = Router();
 
-router.post("/login", controller.login);
-router.post("/register", controller.register);
-router.post("/logout", controller.logout);
+router.get("/validate-token", controller.validateToken);
+router.post("/ambassador/login", controller.login);
+router.post("/admin/login", controller.login);
+router.post("/ambassador/register", controller.register);
+router.post("/admin/register", controller.register);
 
 export default router;

@@ -6,11 +6,17 @@ export const useStore = defineStore('store', () => {
   const isLogged = ref<boolean>(false);
   const basket = ref<IProduct[]>([]);
 
-  function login() {
+  function setIsLogged(value: boolean) {
+    isLogged.value = value;
+  }
+
+  function login(token: string) {
+    sessionStorage.setItem('token', token);
     isLogged.value = true;
   }
 
   function logout() {
+    sessionStorage.removeItem('token');
     isLogged.value = false;
   }
 
@@ -28,5 +34,5 @@ export const useStore = defineStore('store', () => {
     isLogged.value = false;
   }
 
-  return { basket, isLogged, login, logout, addToBasket, removeFromBasket, resetStore };
+  return { basket, isLogged, setIsLogged, login, logout, addToBasket, removeFromBasket, resetStore };
 });

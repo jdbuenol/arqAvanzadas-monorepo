@@ -4,6 +4,50 @@ import z from "zod";
 import bcryptjs from "bcryptjs";
 import Services from "./services";
 import producer from "./kafka";
+import axios from "axios";
+import { IUser } from "./models/user";
+
+const validateToken = async (req: Request, res: Response) => {
+  try {
+    if (
+      !req.headers.authorization ||
+      req.headers.authorization.indexOf("Bearer ") === -1
+    ) {
+      return res.json({
+        code: 401,
+        sucess: false,
+        message: "No está autorizado para realizar esta operación",
+      });
+    }
+
+    const token = req.headers.authorization.replace("Bearer ", "");
+
+    const { success, uid, is_admin } = await Services().verifyToken(token);
+    if (!success) {
+      return response({
+        res,
+        status: 401,
+        error: true,
+        message: "You are not authorized to request this operation",
+      });
+    }
+
+    return response({
+      res,
+      status: 200,
+      error: false,
+      message: "",
+      body: { uid, is_admin },
+    });
+  } catch (error) {
+    return response({
+      res,
+      status: 500,
+      error: true,
+      message: error.message ?? "Error at authentication",
+    });
+  }
+};
 
 const register = async (req: Request, res: Response) => {
   try {
@@ -36,7 +80,7 @@ const register = async (req: Request, res: Response) => {
     }
 
     const { success, message, token, uid } = await Services().createUser(
-      result.data.email,
+      result.data.email.trim().toLowerCase(),
       result.data.password
     );
     if (success === false) {
@@ -48,13 +92,16 @@ const register = async (req: Request, res: Response) => {
       });
     }
 
+    const isAdminRegister = req.path === "/api/admin/register";
+    if (isAdminRegister) await Services().setAdminClaim(uid);
+
     const value = JSON.stringify({
       id: uid,
       first_name: result.data.first_name,
       last_name: result.data.last_name,
-      email: result.data.email,
+      email: result.data.email.trim().toLowerCase(),
       password: await bcryptjs.hash(result.data.password, 10),
-      is_ambassador: false,
+      is_ambassador: isAdminRegister,
     });
 
     await producer.connect();
@@ -63,17 +110,12 @@ const register = async (req: Request, res: Response) => {
       messages: [{ value }],
     });
 
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, //1 day
-    });
-
     return response({
       res,
       status: 200,
       error: false,
       message: "",
-      body: {},
+      body: { token },
     });
   } catch (error: any) {
     return response({
@@ -103,21 +145,38 @@ const login = async (req: Request, res: Response) => {
       });
     }
 
-    // const res: { }
+    const { data } = await axios.get(
+      `${process.env.USER_SERVICE_URL}/find-by-email/${result.data.email
+        .trim()
+        .toLowerCase()}?authSecret=${process.env.AUTH_SECRET}`
+    );
+    if (data.isError) {
+      return response({
+        res,
+        status: 404,
+        error: true,
+        message: "User not found",
+      });
+    }
 
-    // const token = await auth.createCustomToken(user.uid);
+    const userData = data.body as IUser;
+    if (!(await bcryptjs.compare(result.data.password, userData.password))) {
+      return response({
+        res,
+        status: 401,
+        error: true,
+        message: "Invalid credentials",
+      });
+    }
 
-    // res.cookie("jwt", token, {
-    //   httpOnly: true,
-    //   maxAge: 24 * 60 * 60 * 1000, //1 day
-    // });
+    const token = await Services().createToken(userData.id);
 
     return response({
       res,
       status: 200,
       error: false,
       message: "",
-      body: {},
+      body: { token },
     });
   } catch (error: any) {
     return response({
@@ -129,22 +188,10 @@ const login = async (req: Request, res: Response) => {
   }
 };
 
-const logout = (req: Request, res: Response) => {
-  res.cookie("jwt", "", { maxAge: 0 });
-
-  return response({
-    res,
-    status: 200,
-    error: false,
-    message: "",
-    body: {},
-  });
-};
-
 const controller = {
+  validateToken,
   register,
   login,
-  logout,
 };
 
 export default controller;
