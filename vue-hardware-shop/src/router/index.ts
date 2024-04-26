@@ -1,5 +1,4 @@
 import { useStore } from '@/store';
-import { storeToRefs } from 'pinia';
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
@@ -12,6 +11,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/checkout',
     name: 'checkout',
     component: () => import('../views/Checkout.vue'),
+  },
+  {
+    path: '/orders',
+    name: 'orders',
+    component: () => import('../views/Orders.vue'),
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: '/login',

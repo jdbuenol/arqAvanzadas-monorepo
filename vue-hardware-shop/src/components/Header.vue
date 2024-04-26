@@ -18,7 +18,7 @@
         </div>
       </router-link>
 
-      <router-link to="/orders">
+      <router-link v-if="isLogged" to="/orders">
         <div class="header__option">
           <span class="header__optionLineOne">Returns</span>
           <span class="header__optionLineTwo">& Orders</span>

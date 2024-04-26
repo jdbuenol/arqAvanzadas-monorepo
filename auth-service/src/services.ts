@@ -1,3 +1,4 @@
+import axios from "axios";
 import { auth } from "./firebase";
 
 const Services = () => {
@@ -16,7 +17,7 @@ const Services = () => {
         password,
       });
 
-      const token = await auth.createCustomToken(user.uid);
+      const token = await createToken(user.uid);
 
       return {
         success: true,
@@ -59,8 +60,17 @@ const Services = () => {
   };
 
   const createToken = async (uid: string): Promise<string> => {
-    const token = await auth.createCustomToken(uid);
-    return token;
+    const customToken = await auth.createCustomToken(uid);
+
+    const { data } = await axios.post(
+      `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${process.env.FIREBASE_API_KEY}`,
+      {
+        token: customToken,
+        returnSecureToken: true,
+      }
+    );
+
+    return data.idToken;
   };
 
   return {

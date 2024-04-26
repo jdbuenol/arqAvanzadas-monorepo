@@ -4,7 +4,7 @@
     <div class="checkout__left">
       <div>
         <div class="checkout__title">
-          <h3>Hello, {user?.email}</h3>
+          <h3>Hello</h3>
           <h2>{{ basket.length > 0 ? 'Your Shopping Basket' : 'The Basket is empty' }}</h2>
         </div>
 
@@ -19,7 +19,8 @@
           <strong>${{ value }}</strong>
         </p>
 
-        <button v-if="basket.length > 0" @click="goToPayment">Proceed to Checkout</button>
+        <button v-if="basket.length > 0 && isLogged" @click="goToPayment">Proceed to Checkout</button>
+        <router-link v-if="!isLogged" to="/login">Please sign in first here</router-link>
       </div>
     </div>
   </div>
@@ -39,7 +40,7 @@ import { POSITION, useToast } from 'vue-toastification';
 const isLoading = ref<boolean>(false);
 
 const store = useStore();
-const { basket } = storeToRefs(store);
+const { basket, isLogged } = storeToRefs(store);
 const toast = useToast();
 
 const value = computed(() => basket.value.reduce((acc, product) => acc + product.price, 0));
@@ -47,9 +48,18 @@ const value = computed(() => basket.value.reduce((acc, product) => acc + product
 const goToPayment = async () => {
   isLoading.value = true;
   try {
-    const { data } = await axios.post(`${import.meta.env.VITE_NODE_AMBASSADOR}/api/ambassador/links`, {
-      products: basket.value.map(product => product.id),
-    });
+    const token = sessionStorage.getItem('token');
+    const { data } = await axios.post(
+      `${import.meta.env.VITE_NODE_AMBASSADOR}/api/ambassador/links`,
+      {
+        products: basket.value.map(product => product.id),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     window.open(`${import.meta.env.VITE_NEXT_CHECKOUT}/${data.code}`, '_blank');
   } catch (error) {
     console.log(error);
@@ -110,7 +120,9 @@ const goToPayment = async () => {
   box-shadow: 0px 0px 100px 5px rgba(0, 0, 0, 0.9);
 }
 
-.subtotal > button {
+.subtotal > button,
+.subtotal > a {
+  text-align: center;
   cursor: pointer;
   width: 100%;
   background: #f0c14b;
@@ -124,7 +136,8 @@ const goToPayment = async () => {
   transition: all ease-in 200ms;
 }
 
-.subtotal > button:hover {
+.subtotal > button:hover,
+.subtotal > a:hover {
   font-size: 13px;
   -webkit-box-shadow: 0px 0px 40px 10px rgba(240, 190, 70, 0.5);
   -moz-box-shadow: 0px 0px 40px 10px rgba(240, 190, 70, 0.5);

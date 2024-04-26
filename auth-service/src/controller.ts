@@ -13,10 +13,11 @@ const validateToken = async (req: Request, res: Response) => {
       !req.headers.authorization ||
       req.headers.authorization.indexOf("Bearer ") === -1
     ) {
-      return res.json({
-        code: 401,
-        sucess: false,
-        message: "No está autorizado para realizar esta operación",
+      return response({
+        res,
+        status: 401,
+        error: true,
+        message: "You are not authorized to request this operation",
       });
     }
 
