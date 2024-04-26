@@ -27,6 +27,7 @@ createConnection().then(async () => {
         "http://localhost:4000",
         "http://localhost:5000",
         "http://localhost:5173",
+        "http://localhost:3006"
       ],
     })
   );
