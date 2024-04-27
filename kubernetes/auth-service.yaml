@@ -18,6 +18,8 @@ spec:
       - name: auth-service
         image: mateoecheverrip/auth-service:latest
         env:
+          - name: FIREBASE_API_KEY
+            value: "AIzaSyBTKaSf20LXa5y72rsAG_MFeJn0s2uhk5g"
           - name: FIREBASE_PROJECT_ID
             value: "arq-avanzadas-47f60"
           - name: FIREBASE_CLIENT_EMAIL
@@ -29,7 +31,13 @@ spec:
           - name: KAFKA_API_SECRET
             value: "HrF+SU5gmsgvlMyDwCJg06Q9Ng+fLM04WAA19SJNV7cXNkJWSwYeHs7f8sGf7V4m"
           - name: KAFKA_BOOTSTRAP_SERVER
-            value: "pkc-12576z.us-west2.gcp.confluent.cloud:9092"    
+            value: "pkc-12576z.us-west2.gcp.confluent.cloud:9092"  
+          - name: USER_SERVICE_URL
+            value: "http://user:10000" 
+          - name: AUTH_SECRET
+            value: "test"
+          - name: NODE_ENV
+            value: "development"    
         ports:
         - containerPort: 9000
 ---
@@ -38,6 +46,7 @@ kind: Service
 metadata:
   name: auth
 spec:
+  type: LoadBalancer  # Esto indica que deseas una IP pública
   selector:
     app: auth-service
   ports:

@@ -36,7 +36,7 @@ const toast = useToast();
 
 onMounted(async () => {
   try {
-    const { data } = await axios.get(`${import.meta.env.VITE_NODE_AMBASSADOR}/api/ambassador/products/frontend`);
+    const { data } = await axios.get(`http://35.226.5.41:8000/api/ambassador/products/frontend`);
     products.value = data as IProduct[];
   } catch (error) {
     console.log(error);

@@ -47,7 +47,7 @@ const router = useRouter();
 const signIn = async () => {
   isLoading.value = true;
   try {
-    const { data } = await axios.post(`${import.meta.env.VITE_AUTH_SERVICE}/api/ambassador/login`, {
+    const { data } = await axios.post(`http://34.71.72.41:9000/api/ambassador/login`, {
       email: email.value,
       password: password.value,
     });

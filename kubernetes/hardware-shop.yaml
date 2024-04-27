@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: hardware-shop
-        image: mateoecheverrip/hardware-shop:latest
+        image: mateoecheverrip/hardware-shop:V4
         ports:
         - containerPort: 80
 ---

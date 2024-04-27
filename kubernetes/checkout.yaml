@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: next-checkout
-        image: mateoecheverrip/checkout:latest
+        image: mateoecheverrip/checkout:V1
         ports:
         - containerPort: 3000
 ---

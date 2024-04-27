@@ -16,7 +16,22 @@ spec:
     spec:
       containers:
       - name: backend
-        image: mateoecheverrip/node-ambassador:latest
+        image: mateoecheverrip/node-ambassador:V2
+        env:
+          - name: SECRET_KEY
+            value: "secret"
+          - name: STRIPE_SECRET
+            value: "sk_test_51P4tTPEssW8WFySdn07XPhToY2Qly7hYNuFrfApgOcu05kyWl3b1s8ovsrlubGX6ihsERxXL8odvliu5D81mt8Th007whdXzhb"
+          - name: CHECKOUT_URL
+            value: "http://35.226.187.36:5000"
+          - name: USER_SERVICE_URL
+            value: "http://user:10000"
+          - name: AUTH_SERVICE_URL
+            value: "http://auth:9000"
+          - name: AUTH_SECRET
+            value: "test"
+          - name: USER_SECRET
+            value: "test"
         ports:
         - containerPort: 8000
 ---
@@ -25,6 +40,7 @@ kind: Service
 metadata:
   name: backend
 spec:
+  type: LoadBalancer  # Esto indica que deseas una IP pública
   selector:
     app: backend
   ports:

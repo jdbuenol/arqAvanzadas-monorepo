@@ -31,7 +31,7 @@ type IRanking = Record<string, number>;
 onMounted(async () => {
   try {
     const token = sessionStorage.getItem('token');
-    const res = await axios.get(`${import.meta.env.VITE_NODE_AMBASSADOR}/api/ambassador/rankings`, {
+    const res = await axios.get(`http://35.226.5.41:8000/api/ambassador/rankings`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

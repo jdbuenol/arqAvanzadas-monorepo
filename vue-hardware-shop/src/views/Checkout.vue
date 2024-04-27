@@ -50,7 +50,7 @@ const goToPayment = async () => {
   try {
     const token = sessionStorage.getItem('token');
     const { data } = await axios.post(
-      `${import.meta.env.VITE_NODE_AMBASSADOR}/api/ambassador/links`,
+      `http://35.226.5.41:8000/api/ambassador/links`,
       {
         products: basket.value.map(product => product.id),
       },
@@ -60,7 +60,7 @@ const goToPayment = async () => {
         },
       }
     );
-    window.open(`${import.meta.env.VITE_NEXT_CHECKOUT}/${data.code}`, '_blank');
+    window.open(`http://35.226.187.36:5000/${data.code}`, '_blank');
   } catch (error) {
     console.log(error);
     toast.error('Error at get payment link', {
