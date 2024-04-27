@@ -1,14 +1,17 @@
 import { EachMessagePayload, Kafka } from "kafkajs";
 import { createTransport } from "nodemailer";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 const kafka = new Kafka({
   clientId: "email-consumer",
-  brokers: ["pkc-12576z.us-west2.gcp.confluent.cloud:9092"],
+  brokers: [process.env.KAFKA_BROKER],
   ssl: true,
   sasl: {
     mechanism: "plain",
-    username: "I6WRLJ7RHGD4TZYB",
-    password:
-      "VsM5yBeqnrfSf56ZuXPvcYaeJgb3bj2SJh9h4wvNimw65FQCd3K6i3Z8qASkXhCm",
+    username: process.env.KAFKA_USERNAME,
+    password: process.env.KAFKA_SECRET,
   },
 });
 
