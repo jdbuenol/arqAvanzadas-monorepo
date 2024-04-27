@@ -16,7 +16,14 @@ spec:
     spec:
       containers:
       - name: email-backend
-        image: mateoecheverrip/email:latest
+        image: mateoecheverrip/email:V1
+        env:
+          - name: KAFKA_BROKER
+            value: "pkc-12576z.us-west2.gcp.confluent.cloud:9092"
+          - name: KAFKA_USERNAME
+            value: "MVUKMAXV6YCAXADW"
+          - name: KAFKA_SECRET
+            value: "HrF+SU5gmsgvlMyDwCJg06Q9Ng+fLM04WAA19SJNV7cXNkJWSwYeHs7f8sGf7V4m"  
         ports:
         - containerPort: 8025
 ---
