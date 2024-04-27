@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service-deployment
+  labels:
+    app: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+      - name: auth-service
+        image: mateoecheverrip/auth-service:latest
+        env:
+          - name: FIREBASE_PROJECT_ID
+            value: "arq-avanzadas-47f60"
+          - name: FIREBASE_CLIENT_EMAIL
+            value: "firebase-adminsdk-h01l4@arq-avanzadas-47f60.iam.gserviceaccount.com"
+          - name: FIREBASE_PRIVATE_KEY
+            value: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDsLGm0sNuSGh+V\nzuMguLzOOSVORmBr/nXLQ85+W3RfhnJkqguuT1HXzOROGmoRztC6zx5cgRXgyXtB\nCuBFJuMlI7byVnFcEpt47V4kuY4oLifeBZgL3/tkNPtTvk5RX9W3EZX8uUH9m2w5\n3zvOnGxbytEOprTzJzhnKoUap1oUDzCjA/CkhQ2chpnc4Wv9PbAFoTjAHuRzLFJl\ntuzeRgGuZ/gyrVA0PPZpLDjjkSFztsialg7GTM9PKQ2AISseyoM8A0o5WWPTQLuw\nYPtTt0RDrfFnvHz+RmDzndHapGIzhhmMy9fRE4XoVAT/hz2w/UrcCHsgvhcyQj2N\n3+yCc8sZAgMBAAECggEAAxjiLNTowj8eX4EdByneYarL75LPyFFyrcRb60S2L1uv\nORz7m3ujOwFkaUD317fcEqZtSLZcKTch4HSHhFH6MVuJK7SAwX3QemWMLM7epi3/\nHEPQ7pnvZ+0OcowTZpuLQn6kFlz/GFfJvkNhpfK09JS3CQ+cXffLacXxL4GW67Om\nAnqV75wZFs3b47e7rT9Wsrmljj7iXuz6pHKHeNEx8byeOWtnt1OYWzmUMPB49PA2\nEpKXfQpm7m7JVYIIgY8A/yItnoWfqkvK4anUA0avGyl+ln+ka2Dudp+RIhwbmlCh\n/hjVbNiE82yAf2NPxoipMRyqEmEjiGW+AG1Xkpl5sQKBgQD9FpvLzVmOD5g9RDmY\nilG2Qjc/CdntHz51qf5XE2av2nYf3HT2Ozf5h5iekwSG/UwJ+BdhaSJzh5bdGLqA\niGxBirNH9O1u4zM/a1WOT0GHxRyF+pQK0YcGneXLtRmcBDSQoc6JjYa70l3XgNY9\nNgw9YVIgLu6qgg9BMvH2V9o78QKBgQDu4/yw07wAWvfC2hMAOIxz3iTGf9cxsOHK\nfH+Uu9FanD0EZZI0DOiJg2J0qrpU0HIDpEuNBNUUOu19v3iiGIS9I+zIYptvUiLn\nRwFSDf6zd8YtryPtkgC+UDMKAOIFim5sN627k05/XToNNaw5gTpiM62Gp7qTVmYT\nB3aICXLJqQKBgQDeqlR5svpWhRvg0zSFIzSO0KUAfi9QcsumA+C0RWpzzxVcJL52\noFU34XeCFEDIbvPGVZJkbnYUBLfTX90+FkiARYJEDZYTmCrPYiSMpug1hlL5ASPc\nfMl6JdM2LOgSHpUMpn8q/+wJNSTA5CYZBoMwQX5auE/cjb7UEvlUTajAUQKBgE9N\nqAkbgQGtMSqiMkSUgSvFxveOYOXCDnKlucSqROmLjEX1Yf+deWSNFRYdxxV4zSCg\nXeRGgmXg2g4wjd9hvE79qhEriuX9olCcpbeTpcX2MPfheE/ZdB25iff8Kwwj1Fxg\nb3AhiqGFVUwlUTMVz0fiV+ynqaxXtjMC+zpVyKFhAoGARXNmq2C1ArQT80489BeD\nmvlG2/4kKXrFEEELOr8Y2ZDCFr+7ZuapB0DlCj/tU4FMAcjgV/QRWtJhOgUgGOCm\nbrCwxom8u+ymceVoeOC+iFjzMdET5Ri/5BmI16UilZf35qE3fZ73vozt3LN4rLpA\n/pFKTaHrShvn1OLZvXoIy3k=\n-----END PRIVATE KEY-----\n"
+          - name: KAFKA_API_KEY
+            value: "MVUKMAXV6YCAXADW"
+          - name: KAFKA_API_SECRET
+            value: "HrF+SU5gmsgvlMyDwCJg06Q9Ng+fLM04WAA19SJNV7cXNkJWSwYeHs7f8sGf7V4m"
+          - name: KAFKA_BOOTSTRAP_SERVER
+            value: "pkc-12576z.us-west2.gcp.confluent.cloud:9092"    
+        ports:
+        - containerPort: 9000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth
+spec:
+  selector:
+    app: auth-service
+  ports:
+    - protocol: TCP
+      port: 9000
+      targetPort: 9000 

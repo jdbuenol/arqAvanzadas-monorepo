@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-admin-deployment
+  labels:
+    app: react-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: react-admin
+  template:
+    metadata:
+      labels:
+        app: react-admin
+    spec:
+      containers:
+      - name: react-admin
+        image: mateoecheverrip/admin:latest
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: react-admin
+spec:
+  type: LoadBalancer
+  selector:
+    app: react-admin
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

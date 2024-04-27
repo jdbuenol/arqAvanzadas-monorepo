@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service-deployment
+  labels:
+    app: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: mateoecheverrip/user-services:latest
+        env:
+          - name: KAFKA_BROKER
+            value: "pkc-12576z.us-west2.gcp.confluent.cloud:9092"
+          - name: KAFKA_USERNAME
+            value: "MVUKMAXV6YCAXADW"
+          - name: KAFKA_SECRET
+            value: "HrF+SU5gmsgvlMyDwCJg06Q9Ng+fLM04WAA19SJNV7cXNkJWSwYeHs7f8sGf7V4m"
+          - name: PORT
+            value: "10000"
+          - name: REDIS_URL
+            value: "redis://redis:6379"
+        ports:
+        - containerPort: 10000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user
+spec:
+  selector:
+    app: user-service
+  ports:
+    - protocol: TCP
+      port: 10000
+      targetPort: 10000        
